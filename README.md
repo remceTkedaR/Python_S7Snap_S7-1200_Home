@@ -35,6 +35,8 @@ see python-snap7 in action.
 ## About
 
 This is a types based python wrapper for snap7. Snap7 is an open source, 32/64 bit, multi-platform Ethernet communication suite for interfacing natively with Siemens S7 PLCs.
+File CSV - 
+csv file configuration. Separator [ , ] comma. Special character text delimiter [ ' ] single quote.
 
 
 ## Copyright and License

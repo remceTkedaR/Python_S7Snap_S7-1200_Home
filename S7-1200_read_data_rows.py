@@ -30,6 +30,7 @@ import os
 import locale
 
 # Find existing file mame file_data csv
+PLC_IP = '192.168.1.121'
 
 
 def max_number_file():
@@ -37,7 +38,7 @@ def max_number_file():
     # Find existing file mame file_data csv
     f_names = ([file_find for root, dirs, files in os.walk(".", topdown=False)
                 for file_find in files
-                if file_find.endswith('.csv')  #or file.endswith('.png') or file.endswith('.pdf')
+                if file_find.endswith('.csv')  # or file.endswith('.png') or file.endswith('.pdf')
                 ])
     for f_name in f_names:
         f_name_new = f_name.replace('file_data', '')  # cutoff file_data
@@ -51,8 +52,9 @@ def max_number_file():
     return number_int
 
 
-# time start to  delay
-last_time_ms = int(round(time.time() * 10000))
+# time start to  delay 10000
+last_time_ms = int(round(time.time() * 100))
+
 
 # Function read data from instance db
 
@@ -83,6 +85,7 @@ def data_block_read(db_number, inst_number, data):
     my_str_value = '%-.4f' % result
     return my_str_value
 
+
 # function reading coils (byte_out - PLC) (byte-size - PLC coils size) (out_bit - PLC coil)
 
 
@@ -105,12 +108,10 @@ def db_read_byte(plc, db_number, inst_number, size, byte_index, bit_index):
     return db_byte
 
 
-
 # Find number new file
-
-
 b = max_number_file()
 
+# main loop
 while True:
 
     # Opened file to writing
@@ -120,7 +121,7 @@ while True:
     # file headers to saving
     file_data_csv.writerow(
         ['Date', 'Time', 'Outside', 'Living room', 'Hall', 'Bedroom 1', 'Bedroom 2', 'Bathroom', 'Room'
-         , 'furnace valve', 'Living room valve', 'Hall room valve', 'Bedroom 1 valve', 'Bedroom 2 valve',
+            , 'furnace valve', 'Living room valve', 'Hall room valve', 'Bedroom 1 valve', 'Bedroom 2 valve',
          'TV room valve', 'Bathroom valve', 'WC valve'])
 
     # index measurement loop
@@ -133,10 +134,10 @@ while True:
     # measurement loop, set number of lines in the file
     while a < 50:
         # execution condition delay time
-        diff_time_ms = int(round(time.time() * 100)) - last_time_ms
+        diff_time_ms = int(round(time.time() * 1000)) - last_time_ms
         # This is delay 3000000ms = 5min
-        if diff_time_ms >= 30000:
-            last_time_ms = int(round(time.time() * 100))
+        if diff_time_ms >= 3000:
+            last_time_ms = int(round(time.time() * 1000))
 
             # Stamp to time & date
             now = datetime.now()
@@ -144,14 +145,17 @@ while True:
             time_today = now.strftime("%H:%M:%S")
 
             #  connect to S7 1200
-            try:
-                plc = snap7.client.Client()
-                plc.connect('192.168.2.22', 0, 1)
-                error_connect = plc.get_connected()
-            except snap7.snap7exceptions.Snap7Exception:
-                time.sleep(0.2)
-                plc = snap7.client.Client()
-                plc.connect('192.168.2.22', 0, 1)
+            connected = False
+
+            while not connected:
+                try:
+                    plc = snap7.client.Client()
+                    plc.connect(PLC_IP, 0, 1)
+                    error_connect = plc.get_connected()
+                    connected = True  # Set flag  na True, if connected
+                except Exception:
+                    print("Not connected. sleep 15 sec...")
+                    time.sleep(15)
 
             # Read temperature Outside (db 3, instance 24, data =" real" )
             outside = data_block_read(3, 24, 4)
@@ -185,8 +189,6 @@ while True:
             room_tv_valve = db_read_byte(plc, 4, 6, 1, 0, 6)
             wc_valve = db_read_byte(plc, 4, 6, 1, 0, 6)
 
-            plc.disconnect()
-
             # save to file
 
             file_data_csv.writerow([today, time_today, outside, living_room, hall, bedroom_1, bedroom_2,
@@ -195,11 +197,11 @@ while True:
 
             a += 1
             print(a)
-            if a == 51:
+
+            if a == 50:
                 file.close()
                 os.rename('file_data.csv', str(filename))  # rename file
-
+                plc.disconnect()
+                print("disconnect PLC")
                 print('close file')
                 break
-
-
