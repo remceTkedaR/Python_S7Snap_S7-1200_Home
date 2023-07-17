@@ -1,10 +1,17 @@
-# [Snap7 Python and Siemens S7-1200 -Collecting and sending measurement data ](http://electronic.pythonanywhere.com/)
+# Snap7 Python and Siemens S7-1200 -Collecting and sending measurement data
 
 
 ## Preview
 
-The following document describes the configuration of Snap7 for Simatic S7 –1200 controllers to create communication between the controller and the computer via Industrial Ethernet, Profinet protocol(http://electronic.pythonanywhere.com/#skills)
+The program will download data from the DB block of the PLC controller in a cyclic manner 
+with a fixed interval from the Siemens S7 1200 controller. 
+The program can set the size of the collected measurements. 
+After reaching a certain amount of news, the data packet is saved to a 'csv' file.
+CSV file:
+file configuration. Separator [ , ] comma. Special character text delimiter [ ' ] single quote.
 
+## Schematic
+![smart Home](https://github.com/remceTkedaR/images/blob/master/images/my_home_smart_1.jpg)
 **[View Live Preview](http://electronic.pythonanywhere.com/#about)**
 
 
@@ -33,12 +40,13 @@ see python-snap7 in action.
 
 
 ## About
+This is a types based python wrapper for snap7. 
+Snap7 is an open source, 32/64 bit, multi-platform 
+Ethernet communication suite for interfacing natively with Siemens S7 PLCs.
 
-This is a types based python wrapper for snap7. Snap7 is an open source, 32/64 bit, multi-platform Ethernet communication suite for interfacing natively with Siemens S7 PLCs.
-File CSV - 
-csv file configuration. Separator [ , ] comma. Special character text delimiter [ ' ] single quote.
+This is a types based python wrapper for snap7. Snap7 is an open source, 32/64 bit
 
 
-## Copyright and License
+## Copying is allowed
 
-Copyright  GNU GPL | Radosław Tecmer 2020 rok  [RT](http://electronic.pythonanywhere.com/#about) license.
+Team of Electronics and Industrial Automation 2023 | Radosław Tecmer  [RT](http://electronic.pythonanywhere.com/#about)
